@@ -1,18 +1,20 @@
 import os
 import sys
 from dataclasses import dataclass
+import numpy as np
 
 
 from sklearn.ensemble import (
-    AdaBoostRegressor,
-    GradientBoostingRegressor,
+    
     RandomForestRegressor,
 )
-from sklearn.linear_model import LinearRegression
+
 from sklearn.metrics import r2_score,mean_absolute_error,mean_squared_error
-from sklearn.neighbors import KNeighborsRegressor
-from sklearn.tree import DecisionTreeRegressor
-from xgboost import XGBRegressor
+
+
+
+from sklearn.linear_model import Lasso
+
 
 
 
@@ -39,17 +41,32 @@ class ModelTrainer:
             models = {
                 "Random Forest": RandomForestRegressor(),
                 
+               
+                
             }
             params = {
+
                
                 "Random Forest": {
-                   'n_estimators': [50, 100],  # Avoid going too high early on
-                   'max_depth': [5, 10, 15],   # Force trees to be shallower
-                   'min_samples_split': [5, 10],  # Prevent deep splitting
-                   'min_samples_leaf': [2, 4, 6],  # Force more generalization at leaves
-                   'max_features': ['sqrt', 0.5],  # Try fewer features per split
+                   'n_estimators': [50, 100],
+                   'max_depth': [5, 10, 15],   
+                   'min_samples_split': [5, 10],  
+                   'min_samples_leaf': [2, 4, 6], 
+                   'max_features': ['sqrt', 0.5],  
                    'bootstrap': [True]
                      },
+
+                "Lasso": {
+                    "alpha": np.logspace(-4, 2, 50),
+                    "max_iter": [1000, 5000, 10000],
+                    "tol": [1e-4, 1e-3],
+                    "selection": ["cyclic", "random"],
+                    "fit_intercept": [True, False]
+                },
+                
+                
+
+               
                 
             
                 
@@ -59,10 +76,10 @@ class ModelTrainer:
             model_report:dict=evaluate_models(X_train=X_train,y_train=y_train,X_test=X_test,y_test=y_test,
                                              models=models,param=params)
             
-            ## To get best model score from dict
+        
             best_model_score = max(sorted(model_report.values()))
 
-            ## To get best model name from dict
+      
 
             best_model_name = list(model_report.keys())[
                 list(model_report.values()).index(best_model_score)

@@ -4,6 +4,7 @@ import sys
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
 
 import pandas as pd
+import numpy as np
 
 from sklearn.model_selection import train_test_split
 from dataclasses import dataclass
@@ -26,6 +27,12 @@ class DataIngestion:
      
         try:
             df=pd.read_csv('data/final_data.csv')
+            df["hour_sin"] = np.sin(2 * np.pi * df["hour"] / 24)
+            df["hour_cos"] = np.cos(2 * np.pi * df["hour"] / 24)
+            df = df.drop(columns=["hour"])
+            df["temp_diff"] = df["zone_temperature"] - df["outdoor_temperature"]
+
+            
             
 
             os.makedirs(os.path.dirname(self.ingestion_config.train_data_path),exist_ok=True)
