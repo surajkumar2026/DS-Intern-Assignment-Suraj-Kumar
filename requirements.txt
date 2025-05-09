@@ -1,6 +1,7 @@
 ipykernel
-pandas
-numpy
-matplotlib
-seaborn
+# pandas
+# numpy
+# matplotlib
+# seaborn
 scikit-learn
+catboost
